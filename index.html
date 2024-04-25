@@ -1,0 +1,41 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Reproductor de Video HLS</title>
+<!-- Incluir la biblioteca hls.js -->
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+</head>
+<body>
+
+<video id="video" controls></video>
+
+<script>
+  var video = document.getElementById('video');
+  var urlStream = 'https://streamer.zapitv.com/PTV-granada/index.m3u8'; // Reemplaza con la URL de tu stream m3u8
+
+  if (Hls.isSupported()) {
+    var hls = new Hls({
+      xhrSetup: function(xhr, url) {
+        var customUserAgent = 'tu_user_agent_aquí'; // Establece tu user-agent personalizado aquí
+        xhr.setRequestHeader('User-Agent', customUserAgent);
+        console.log('User-Agent set to:', customUserAgent); // Log para verificar el User-Agent
+      }
+    });
+    hls.loadSource(urlStream);
+    hls.attachMedia(video);
+    hls.on(Hls.Events.MANIFEST_PARSED, function() {
+      video.play();
+    });
+  } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+    video.src = urlStream;
+    video.addEventListener('loadedmetadata', function() {
+      video.play();
+    });
+  } else {
+    console.error('HLS no es soportado en este navegador.');
+  }
+</script>
+
+</body>
+</html>
